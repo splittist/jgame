@@ -131,7 +131,7 @@ window.addEventListener('load',function(e) {
 	    ctx.lineTo(-this.p.cx, this.p.cy);
 	    ctx.lineTo(-this.p.cx, -this.p.cy);
 	    ctx.stroke();
-	    ctx.fillRect(this.p.cx -2, this.p.y + 2, 2, 2);
+	    ctx.fillRect(this.p.cx - 4, -4, 4, 8);
 
 	    var fill = Math.max(0,
 				Math.floor(Q.state.get("charge")/100 * (this.p.w - 12)));

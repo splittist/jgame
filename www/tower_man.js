@@ -3,7 +3,8 @@
 window.addEventListener("load",function() {
     var Q = window.Q = Quintus({ development: true })
 	.include("Sprites, Scenes, Input, 2D")
-        .setup({ width: 640, height: 480 });
+        .setup({ width: 640, height: 480 })
+	.controls(true);
 
     Q.input.keyboardControls();
     Q.input.joypadControls();
@@ -15,104 +16,6 @@ window.addEventListener("load",function() {
     var SPRITE_TILES = 2;
     var SPRITE_ENEMY = 4;
     var SPRITE_DOT = 8;
-
-    Q.Sprite.extend("Player", {
-	init: function(p) {
-	    
-	    this._super(p,{
-		sheet:"player",
-		type: SPRITE_PLAYER,
-		collisionMask: SPRITE_TILES | SPRITE_ENEMY | SPRITE_DOT
-	    });
-
-	    this.add("2d, towerManControls");
-	}
-    });
-
-    Q.Sprite.extend("Enemy", {
-	init: function(p) {
-
-	    this:_super(p,{
-		sheet: "enemy",
-		type: SPRITE_ENEMY,
-		collisionMask: SPRITE_PLAYER | SPRITE_TILES
-	    });
-
-	    this.add("2d,enemyControls");
-	    this.on("hit.sprite",this,"hit");
-	},
-
-	hit: function(col) {
-	    if(col.obj.isA("Player")) {
-		Q.stageScene("level1");
-	    }
-	}
-    });
-
-    Q.Sprite.extend("Dot", {
-	init: function(p) {
-	    this._super(p,{
-		sheet: 'dot',
-		type: SPRITE_DOT,
-		sensor: true
-	    });
-
-	    this.on("sensor");
-	    this.on("inserted");
-	},
-
-	sensor: function() {
-	    this.destroy();
-	    this.stage.dotCount--;
-	    if(this.stage.dotCount == 0) {
-		Q.stageScene("level1");
-	    }
-	},
-
-	inserted: function() {
-	    this.stage.dotCount = this.stage.dotCount || 0;
-	    this.stage.dotCount++;
-	}
-    });
-
-    Q.Dot.extend("Tower", {
-	init: function(p) {
-	    this._super(Q._defaults(p,{
-		sheet: 'tower'
-	    }));
-	}
-    });
-
-    Q.tilePos = function(col,row) {
-	return { x: col*32 + 16, y: row*32 + 16 };
-    }
-
-    Q.TileLayer.extend("TowerManMap",{
-	init: function() {
-	    this._super({
-		type: SPRITE_TILES,
-		dataAsset: 'level.json',
-		sheet: 'tiles',
-	    });
-	},
-
-	setup: function() {
-	    var tiles = this.p.tiles = this.p.tiles.concat();
-	    var size = this.p.tileW;
-	    for(var y=0;y<tiles.length;y++) {
-		var row = tiles[y] = tiles[y].concat();
-		for(var x=0;x<row.length;x++) {
-		    var tile = row[x];
-
-		    if(tile == 0 || tile == 2) {
-			var className = tile == 0 ? 'Dot' : 'Tower';
-			this.stage.insert(new Q[className](Q.tilePos(x,y)));
-			row[x] = 0;
-		    }
-		}
-	    }
-	}
-    });
 
     Q.component("towerManControls", {
 	defaults: { speed: 100, direction: 'up' },
@@ -197,6 +100,104 @@ window.addEventListener("load",function() {
 		    p.direction = Math.random() < 0.5 ? 'left' : 'right';
 		} else if(collision.normalX) {
 		    p.direction = Math.random() < 0.5 ? 'up' : 'down';
+		}
+	    }
+	}
+    });
+
+    Q.Sprite.extend("Player", {
+	init: function(p) {
+	    
+	    this._super(p,{
+		sheet:"player",
+		type: SPRITE_PLAYER,
+		collisionMask: SPRITE_TILES | SPRITE_ENEMY | SPRITE_DOT
+	    });
+
+	    this.add("2d, towerManControls");
+	}
+    });
+
+    Q.Sprite.extend("Enemy", {
+	init: function(p) {
+
+	    this._super(p,{
+		sheet: "enemy",
+		type: SPRITE_ENEMY,
+		collisionMask: SPRITE_PLAYER | SPRITE_TILES
+	    });
+
+	    this.add("2d,enemyControls");
+	    this.on("hit.sprite",this,"hit");
+	},
+
+	hit: function(col) {
+	    if(col.obj.isA("Player")) {
+		Q.stageScene("level1");
+	    }
+	}
+    });
+
+    Q.Sprite.extend("Dot", {
+	init: function(p) {
+	    this._super(p,{
+		sheet: 'dot',
+		type: SPRITE_DOT,
+		sensor: true
+	    });
+
+	    this.on("sensor");
+	    this.on("inserted");
+	},
+
+	sensor: function() {
+	    this.destroy();
+	    this.stage.dotCount--;
+	    if(this.stage.dotCount == 0) {
+		Q.stageScene("level1");
+	    }
+	},
+
+	inserted: function() {
+	    this.stage.dotCount = this.stage.dotCount || 0;
+	    this.stage.dotCount++;
+	}
+    });
+
+    Q.Dot.extend("Tower", {
+	init: function(p) {
+	    this._super(Q._defaults(p,{
+		sheet: 'tower'
+	    }));
+	}
+    });
+
+    Q.tilePos = function(col,row) {
+	return { x: col*32 + 16, y: row*32 + 16 };
+    }
+
+    Q.TileLayer.extend("TowerManMap",{
+	init: function() {
+	    this._super({
+		type: SPRITE_TILES,
+		dataAsset: 'level.json',
+		sheet: 'tiles',
+	    });
+	},
+
+	setup: function() {
+	    var tiles = this.p.tiles = this.p.tiles.concat();
+	    var size = this.p.tileW;
+	    for(var y=0;y<tiles.length;y++) {
+		var row = tiles[y] = tiles[y].concat();
+		for(var x=0;x<row.length;x++) {
+		    var tile = row[x];
+
+		    if(tile == 0 || tile == 2) {
+			var className = tile == 0 ? 'Dot' : 'Tower';
+			this.stage.insert(new Q[className](Q.tilePos(x,y)));
+			row[x] = 0;
+		    }
 		}
 	    }
 	}
