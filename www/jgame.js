@@ -386,7 +386,7 @@ window.addEventListener('load',function(e) {
     Q.Sprite.extend("Title", {
 	init: function(p) {
 	    this._super({
-		y: 150,
+		y: Q.height/4,
 		x: Q.width/2,
 		asset: "title.png"
 	    });
@@ -418,7 +418,7 @@ window.addEventListener('load',function(e) {
 	    label: "Tap to start",
 	    align: 'center',
 	    x: Q.width/2,
-	    y: 280,
+	    y: Q.height/2 - 30,
 	}));
 
 
@@ -426,7 +426,7 @@ window.addEventListener('load',function(e) {
 	    label: "Don't tap the red items!",
 	    align: 'center',
 	    x: Q.width/2,
-	    y: 370,
+	    y: Q.height/2 + 30,
 	}));
     });
 
@@ -438,10 +438,10 @@ window.addEventListener('load',function(e) {
 	stage.insert(new Q.Title());
 	
 	stage.insert(new Q.UI.Text({
-	    label: "Game Over!",
+	    label: "Level Failed",
 	    align: 'center',
 	    x: Q.width/2,
-	    y: 350,
+	    y: Q.height/2,
 	}));
 
     });
@@ -454,10 +454,10 @@ window.addEventListener('load',function(e) {
 	stage.insert(new Q.Title());
 	
 	stage.insert(new Q.UI.Text({
-	    label: "You Win!",
+	    label: "Level Completed",
 	    align: 'center',
 	    x: Q.width/2,
-	    y: 350,
+	    y: Q.height/2,
 	}));
 	
     });
